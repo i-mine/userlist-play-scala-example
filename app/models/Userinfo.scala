@@ -49,7 +49,7 @@ class UserinfoDaoImpl @Inject()(dbConfigProvider: DatabaseConfigProvider)
 
   override def update(newUser: Userinfo): Future[String] = {
     db.run(userInfos.filter(_.id === newUser.id).update(newUser)).map(
-      res => "User sucessfully added"
+      res => "User sucessfully updated"
     ).recover{
       case ex: Exception => ex.getCause.getMessage
     }

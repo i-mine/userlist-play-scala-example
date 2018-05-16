@@ -5,6 +5,7 @@ import javax.inject.{Inject, Singleton}
 import models.Userinfo
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSClient
+import play.api.mvc._
 import play.api.mvc.{AbstractController, ControllerComponents}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 @Singleton
 class UserInfoController @Inject()(cc: ControllerComponents, ws: WSClient) extends AbstractController(cc) {
-  def list = Action.async {
+  def list = Action.async {implicit request: Request[AnyContent] =>
     import models.JsonFormats._
     val url = s"http://localhost:9000/api/users"
     ws.url(url).get().map {
@@ -38,7 +39,7 @@ class UserInfoController @Inject()(cc: ControllerComponents, ws: WSClient) exten
     }
   }
 
-  def add = Action {
+  def add = Action {implicit request: Request[AnyContent] =>
     Ok(views.html.userForm("Add User"))
   }
 

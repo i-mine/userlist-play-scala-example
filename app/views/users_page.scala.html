@@ -1,0 +1,100 @@
+@(messages: String)(implicit request: RequestHeader)
+@import helper._
+@layout(messages) {
+    <div>
+        <form action="@routes.ApplicationController.search()" method="post">
+            @CSRF.formField
+            <input type="search" class="form-control pull-left search padding" name="username" placeholder="查询">
+            <a href="@routes.UserInfoController.add()" class="btn btn-primary pull-left padding">添加</a>
+            <a href="" class="btn btn-success pull-left padding">导出</a>
+        </form>
+
+        <table id="table" class="table table-bordered table-hover table-striped container">
+            <!-- 插入动态数据 -->
+        </table>
+
+    </div>
+    <div id="paged" class="" style="text-align: center;"></div>
+
+    <script src="/assets/layui/layui.js" charset="utf-8"></script>
+    <script>
+            var token = '@CSRF.getToken.value';
+            $(document).ready(function(){
+                //ajax请求后台数据
+                getdata();
+                toPage();
+            });
+
+            //分页参数设置 这些全局变量关系到分页的功能
+            var startAllAppoint = 0;//开始行数
+            var limitAllAppoint = 5;//每页显示数据条数
+            var currentPageAllAppoint = 1;//当前页数
+            var dataLength = 0;//数据总条数
+            function getdata() {
+                $.ajax({
+                    type:"post",
+                    async:false,
+                    url:"/api/users/pagedata?csrfToken="+token,
+                    data:{
+                        start:startAllAppoint,
+                        limit:limitAllAppoint
+                    },
+                    success:function(data,status){
+                        result_rows = eval(data);
+                        console.log(result_rows);
+                        parse_table(data.data);
+                        dataLength  = data.total;//数据总条数
+                    }
+                });
+            }
+            function parse_table(data) {
+                var rows = "<tr class=\"info\">" +
+                        "                <th>#</th>" +
+                        "                <th>用户名</th>" +
+                        "                <th>描述</th>" +
+                        "                <th>密码</th>" +
+                        "                <th>操作</th>" +
+                        "            </tr>";
+                $.each(data,function (v,o) {
+                    rows +='<tr><td>'+ o.id + '</td>';
+                    rows += '<td>' + o.usename + '</td>';
+                    rows += '<td>' + o.description + '</td>';
+                    rows += '<td>' + o.password + '</td>';
+                    rows +='<td><a href="/users/detail/'+o.id+'">详情</a><span style="margin: 0 10px;">|</span>'+
+                            '<a href="/users/edit/'+o.id+'">修改</a><span style="margin: 0 10px;">|</span>' +
+                            '<a href="/users/delete/'+o.id+'">修改</a><span style="margin: 0 10px;">|</span></td>'
+
+                })
+                if(data.length>0){
+                    $("#table").html(rows);
+                }else{
+                    $("#paged").hide();
+                    $("#table").html("<br/><span style='width:10%;height:30px;display:block;margin:0 auto;'>暂无数据</span>");
+                }
+            }
+            
+
+            function toPage(){
+                layui.use(['laypage'], function() {
+                    var laypage = layui.laypage;
+                    var nums = limitAllAppoint;
+                    //调用分页
+                    laypage.render({
+                        elem: 'paged'
+                        ,count: dataLength //这个是后台返回的数据的总条数
+                        ,limit: limitAllAppoint   //每页显示的数据的条数,layui会根据count，limit进行分页的计算
+                        ,curr: currentPageAllAppoint
+                        ,skip: true
+                        ,jump: function(obj, first){
+                            currentPageAllAppoint = obj.curr;
+                            startAllAppoint = (obj.curr-1)*obj.limit;
+                            if(!first){ //一定要加此判断，否则初始时会无限刷新
+                                getdata();//一定要把翻页的ajax请求放到这里，不然会请求两次。
+                            }
+                        }
+                    });
+                });
+            };
+
+    </script>
+}

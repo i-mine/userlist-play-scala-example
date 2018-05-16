@@ -12,11 +12,12 @@ GET         /users/delete/:id            controllers.UserInfoController.delete(i
 GET         /users/edit/:id              controllers.UserInfoController.edit(id: Long)
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                controllers.Assets.versioned(path="/public", file: Asset)
-
 #Restful API
 GET         /api/users                   controllers.ApplicationController.list
 GET         /api/users/detail/:id        controllers.ApplicationController.detail(id: Long)
 GET         /api/users/delete/:id        controllers.ApplicationController.delete(id: Long)
 POST        /api/users/add               controllers.ApplicationController.add
-POST        /api/users/edit/:id              controllers.ApplicationController.edit(id: Long)
+POST        /api/users/edit/:id          controllers.ApplicationController.edit(id: Long)
 POST        /api/users/search            controllers.ApplicationController.search
+POST        /api/users/pagedata          controllers.ApplicationController.pagedata
+GET         /page                        controllers.ApplicationController.page

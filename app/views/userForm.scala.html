@@ -1,6 +1,8 @@
-@(messages: String)
+@(messages: String)(implicit request: RequestHeader)
+@import helper._
 @layout(messages){
     <form role="form" action="@routes.ApplicationController.add()" method="post">
+
         <div class="form-group">
             <label>User name</label>
             <input type="text" class="form-control" name="username" placeholder="username">
@@ -13,6 +15,7 @@
             <label>Password</label>
             <input type="password" class="form-control" name="password" placeholder="Password">
         </div>
+        @CSRF.formField
         <button type="submit" class="btn btn-primary">Submit</button>
         <a href="/users" class="btn btn-info" class="btn btn-primary">Return</a>
     </form>
