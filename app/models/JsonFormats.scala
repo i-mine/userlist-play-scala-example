@@ -22,4 +22,6 @@ object JsonFormats {
 //    )(User.apply _)
 
   implicit val userinfoFormt = Json.format[Userinfo]
+  implicit val pageinfoFormt = Json.format[UserPage]
+
 }

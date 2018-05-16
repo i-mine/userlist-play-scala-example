@@ -2,7 +2,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
-import models.{UserDaoImpl, Userinfo, UserinfoDaoImpl}
+import models._
 
 import scala.concurrent.Future
 

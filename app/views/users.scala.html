@@ -1,7 +1,9 @@
-@(messages: String,users:Seq[Userinfo])
-@layout(messages){
+@(messages: String, users: Seq[Userinfo])(implicit request: RequestHeader)
+@import helper._
+@layout(messages) {
     <div>
         <form action="@routes.ApplicationController.search()" method="post">
+            @CSRF.formField
             <input type="search" class="form-control pull-left search padding" name="username" placeholder="查询">
             <a href="@routes.UserInfoController.add()" class="btn btn-primary pull-left padding">添加</a>
             <a href="" class="btn btn-success pull-left padding">导出</a>
@@ -14,21 +16,21 @@
                 <th>密码</th>
                 <th>操作</th>
             </tr>
-
-            @for(user <- users){
-                <tr>
-                    <td>@user.id</td>
-                    <td>@user.usename</td>
-                    <td>@user.description</td>
-                    <td>@user.password</td>
-                    <td><a href="@routes.UserInfoController.detail(user.id)">详情</a>
+                @for(user <- users) {
+                        <tr>
+                        <td>@user.id</td>
+                        <td>@user.usename</td>
+                        <td>@user.description</td>
+                        <td>@user.password</td>
+                        <td>
+                        <a href="@routes.UserInfoController.detail(user.id)">详情</a>
                         <span style="margin: 0 10px;">|</span>
                         <a href="@routes.UserInfoController.edit(user.id)">修改</a>
                         <span style="margin: 0 10px;">|</span>
                         <a href="@routes.UserInfoController.delete(user.id)">删除</a>
-                    </td>
-                </tr>
-            }
+                        </td>
+                        </tr>
+                }
         </table>
     </div>
 }
